@@ -1,89 +1,78 @@
-# Cloud Computing Lab 1 — Flask & MongoDB Monolithic VM Service
+# Flask and MongoDB inventory API
 
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-2.x-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-NoSQL-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-API-000000?style=flat-square&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-NoSQL-47A248?style=flat-square&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 
-> A lightweight RESTful API service built with **Flask** and **MongoDB** engineered for Virtual Machine (VM) cloud infrastructure deployment.
+Academic cloud-computing lab implementing a small synchronous CRUD API with Flask and a local MongoDB database on a single virtual machine.
 
----
+## What it implements
 
-## 📌 Overview
+The service manages products in the `swalayanDB.produk` collection with three fields: `Nama_Produk`, `Harga`, and `Stok`.
 
-**Project-1-Cloud-Computing** is a cloud computing lab implementation demonstrating monolithic micro-service architecture on a virtual machine (VM). The project provides CRUD REST endpoints managing inventory data stored in a local MongoDB database instance (`swalayanDB`).
+| Method | Endpoint | Behavior |
+| --- | --- | --- |
+| `POST` | `/produk` | Create a product |
+| `GET` | `/produk` | List all products |
+| `PUT` | `/produk/<id>` | Update selected fields by MongoDB ObjectId |
+| `DELETE` | `/produk/<id>` | Delete a product by MongoDB ObjectId |
 
----
-
-## ✨ Key Features
-
-- ⚡ **RESTful Inventory Endpoints**: Complete CRUD lifecycle for product management (`Nama_Produk`, `Harga`, `Stok`).
-- 🍃 **Flask-PyMongo Integration**: Asynchronous NoSQL database queries using PyMongo and BSON ObjectIDs.
-- 🌐 **Cloud VM Ready**: Pre-configured to bind on `0.0.0.0:5000` for external cloud security group / firewall routing.
-
----
-
-## 🛠️ Tech Stack
-
-**Core Framework & Language**
-- Python 3.10+
-- Flask (Micro Microservice Framework)
-
-**Database Layer**
-- MongoDB (NoSQL Database)
-- PyMongo & BSON (`flask_pymongo`)
-
----
-
-## 📡 REST API Directory
-
-| Method | Endpoint | Description | Request Payload |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/produk` | Create a new inventory record | `{"Nama_Produk": "String", "Harga": Number, "Stok": Number}` |
-| `GET` | `/produk` | Retrieve all inventory items | *None* |
-| `PUT` | `/produk/<id>` | Update an inventory item by BSON ID | `{"Nama_Produk": "...", "Harga": ...}` |
-| `DELETE` | `/produk/<id>` | Remove an inventory item by BSON ID | *None* |
-
----
-
-## 📂 Project Structure
-
-```text
-Project-1-Cloud-Computing/
-├── app.py                    # Flask application entry point & API endpoints
-├── LICENSE                   # MIT License
-└── README.md                 # Project Documentation
+```mermaid
+flowchart LR
+    Client["HTTP client"] --> Flask["Flask application"]
+    Flask --> PyMongo["Flask-PyMongo / PyMongo"]
+    PyMongo --> Mongo[("MongoDB: swalayanDB")]
 ```
 
----
+The application binds to `0.0.0.0:5000`, which allows a VM firewall or security group to expose it when explicitly configured.
 
-## 🚀 Getting Started
+## Repository contents
+
+```text
+app.py              Flask routes and MongoDB access
+requirements.txt    Python runtime dependencies
+.gitignore          Python and local-environment exclusions
+README.md           setup and API documentation
+```
+
+## Run locally
 
 ### Prerequisites
-- Python 3.10+
-- MongoDB instance running on `localhost:27017`
 
-### Local Execution
+- Python 3
+- MongoDB listening on `mongodb://localhost:27017`
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/RaihanHadriansyah21/Project-1-Cloud-Computing.git
-   cd Project-1-Cloud-Computing
-   ```
+### Setup
 
-2. **Install Dependencies**:
-   ```bash
-   pip install flask flask-pymongo pymongo
-   ```
+```bash
+git clone https://github.com/RaihanHadriansyah21/Project-1-Cloud-Computing.git
+cd Project-1-Cloud-Computing
+python -m venv .venv
+```
 
-3. **Start Flask Server**:
-   ```bash
-   python app.py
-   ```
-   Server will launch at `http://0.0.0.0:5000`.
+Activate the environment, then run:
 
----
+```bash
+python -m pip install -r requirements.txt
+python app.py
+```
 
-## 📄 License
+Example request:
 
-This project is licensed under the [MIT License](LICENSE).
+```bash
+curl -X POST http://127.0.0.1:5000/produk \
+  -H "Content-Type: application/json" \
+  -d '{"Nama_Produk":"Beras","Harga":75000,"Stok":10}'
+```
+
+## Status and limitations
+
+Course/lab project intended to demonstrate a basic single-VM Flask–MongoDB topology. It is not production-ready:
+
+- MongoDB URI is fixed to localhost in `app.py`.
+- Flask debug mode is enabled in the current entry point.
+- There is no authentication, authorization, schema model, pagination, or automated test suite.
+- Error responses may include exception detail.
+- Deployment infrastructure is not included in the repository.
+
+No license file is currently included.
